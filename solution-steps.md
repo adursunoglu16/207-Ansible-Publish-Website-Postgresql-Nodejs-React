@@ -233,7 +233,7 @@ cd ~/ansible
         name: python3-pip
         state: present
         update_cache: true
-    - name: Install docker sdk
+    - name: Install docker sdk    # control nodedan diger node a yukleyecegimiz icin we need docker sdk
       pip:
         name: docker
     - name: Add user ec2-user to docker group
@@ -247,7 +247,7 @@ cd ~/ansible
         state: started
         enabled: yes
     - name: create build directory
-      file:
+      file:        # bu modul ile directory olusturuz
         path: /home/ec2-user/postgresql
         state: directory
         owner: root
@@ -264,7 +264,7 @@ cd ~/ansible
     - name: remove serdar_postgre container and serdarcw/postgre if exists
       shell: "docker ps -q --filter 'name=serdar_postgre' && docker stop serdar_postgre && docker rm -fv serdar_postgre && docker image rm -f serdarcw/postgre || echo 'Not Found'"
     - name: build container image
-      docker_image:
+      docker_image:          # bu ansibleda bir module
         name: serdarcw/postgre
         build:
           path: /home/ec2-user/postgresql
@@ -280,7 +280,7 @@ cd ~/ansible
         env:
           POSTGRES_PASSWORD: "Pp123456789"
         volumes:
-          - /custom/mount:/var/lib/postgresql/data
+          - /postgres-data:/var/lib/postgresql/data
       register: container_info
     - name: Print the container_info
       debug:
@@ -310,7 +310,7 @@ WORKDIR /usr/src/app
 
 COPY package*.json ./
 
-RUN npm install
+RUN npm install       # package*.json i run etcek
 # If you are building your code for production
 # RUN npm ci --only=production
 
@@ -460,7 +460,7 @@ WORKDIR /app
 
 COPY package*.json ./
 
-RUN yarn install
+RUN yarn install    # instal dependc in thr package.json
 
 # copy all files into the image
 COPY . .
@@ -587,6 +587,7 @@ ansible-playbook docker_react.yml
 
 ## Part 5 - Prepare one playbook file for all instances.
 
+##### Ayni seyi yani docker i kurmayi tek seferde hosts: _development diyerek bu tagle uc node u da etiketleyerek yapabiliriz.
 - Create a `docker_project.yaml` file under `the ~/ansible` folder.
 
 ```yaml
